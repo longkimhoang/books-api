@@ -1,5 +1,6 @@
 package com.longkimhoang.booksapi.service;
 
+import com.longkimhoang.booksapi.dto.CreateBookDto;
 import com.longkimhoang.booksapi.entity.Book;
 import com.longkimhoang.booksapi.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -63,5 +63,21 @@ public class BookServiceTests {
 
         // Then
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void createBook() {
+        // Given
+        var book = new Book(1, "Learn Java", "Description");
+        when(mockBookRepository
+                .save(argThat(arg -> arg.getName().equals("Learn Java") &&
+                        arg.getDescription().equals("Description"))))
+                .thenReturn(book);
+
+        // When
+        var result = service.createBook(new CreateBookDto("Learn Java", "Description"));
+
+        // Then
+        assertEquals(result, book);
     }
 }
