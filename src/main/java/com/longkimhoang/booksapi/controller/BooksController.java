@@ -4,6 +4,7 @@ import com.longkimhoang.booksapi.dto.CreateBookDto;
 import com.longkimhoang.booksapi.entity.Book;
 import com.longkimhoang.booksapi.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class BooksController {
     }
 
     @PostMapping("/books")
+    @ResponseStatus(code = HttpStatus.CREATED)
     public Book createBook(@RequestBody final CreateBookDto dto) {
         return bookService.createBook(dto);
     }
