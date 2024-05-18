@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class BookServiceTests {
@@ -79,5 +79,47 @@ public class BookServiceTests {
 
         // Then
         assertEquals(result, book);
+    }
+
+    @Test
+    public void replaceBook_ifNotExists() {
+        // Given
+        var book = new Book(1, "Learn Java", "Description");
+        when(mockBookRepository.findById(any())).thenReturn(Optional.empty());
+        when(mockBookRepository.save(any())).thenReturn(book);
+
+        // When
+        var result = service.replaceBook(
+                1,
+                new CreateBookDto("Learn Java", "Description"));
+
+        // Then
+        assertEquals(result, book);
+    }
+
+    @Test
+    public void replaceBook_ifAlreadyExists() {
+        // Given
+        var book = new Book(1, "Learn Java", "Description");
+        var updatedBook = new Book(1, "Learn Java 2", "Description 2");
+        when(mockBookRepository.findById(any())).thenReturn(Optional.of(book));
+        when(mockBookRepository.save(eq(updatedBook))).thenReturn(updatedBook);
+
+        // When
+        var result = service.replaceBook(
+                1,
+                new CreateBookDto("Learn Java 2", "Description 2"));
+
+        // Then
+        assertEquals(result, book);
+    }
+
+    @Test
+    public void deleteBook() {
+        // When
+        service.deleteBook(1);
+
+        // Then
+        verify(mockBookRepository, times(1)).deleteById(eq(1L));
     }
 }
